@@ -48,6 +48,9 @@ from infer_ci import accuracy_score, precision_score, tpr_score, f1_score
 from infer_ci import mae, mse, rmse, r2_score, iou
 
 # Classification example:
+y_true = [0, 1, 1, 0, 1]
+y_pred = [0, 1, 0, 0, 1]
+
 evaluator = MetricEvaluator()
 
 accuracy, ci = evaluator.evaluate(
@@ -56,7 +59,6 @@ accuracy, ci = evaluator.evaluate(
     task='classification',
     metric='accuracy',
     method='wilson'
-    # plot=True  # Supported in Bootstrap methods
 )
 ```
 
