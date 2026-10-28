@@ -4,7 +4,7 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Python 3.10+](https://img.shields.io/badge/python-3.10+-blue.svg)](https://www.python.org/downloads/)
 
-This is a standardized evaluation tool that computes common machine learning metrics like Accuracy, MSE, and returns their confidence intervals using bootstraping and other methods. 
+This is a standardized evaluation tool that computes common machine learning metrics, such as accuracy and MSE, and provides confidence intervals using bootstrapping and other methods.
 
 # Why do we need Confidence Interval for reliable AI Model evaluation?
 
@@ -48,20 +48,22 @@ from infer_ci import accuracy_score, precision_score, tpr_score, f1_score
 from infer_ci import mae, mse, rmse, r2_score, iou
 
 # Classification example:
+y_true = [0, 1, 1, 0, 1]
+y_pred = [0, 1, 0, 0, 1]
+
 evaluator = MetricEvaluator()
 
 accuracy, ci = evaluator.evaluate(
-    y_true=y_true,
-    y_pred=y_pred,
-    task='classification',
-    metric='accuracy',
-    method='wilson'
-    # plot=True  # Supported in Bootstrap methods
+y_true=y_true,
+y_pred=y_pred,
+task='classification',
+metric='accuracy',
+method='wilson'
 )
 ```
 
-## All methods can do an analytical computation, but do a bootsrapping computation by default
-By default all the methods return an Bootstrap Bias-Corrected and Accelerated computation of the confidence intervals (CI). It is an advanced version of the basic bootstrap method that corrects for both bias and skewness in the estimate.
+## Confidence Interval Calculation Methods
+Methods that support analytical confidence interval calculation can use analytical approaches. Bootstrap-based methods use bootstrapping to estimate confidence intervals. By default, applicable methods use the bias-corrected and accelerated (BCa) bootstrap method to calculate confidence intervals (CIs). This method adjusts for both bias and skewness in the estimate.
 
 For other computation of the CI for any of the methods below, just specify `method='jackknife_ci'`, or `method='bootstrap_percentile'`. These are different ways of doing the bootstrapping, but `method='bootstrap_bca'` is the generalibly reccomended method.
 
