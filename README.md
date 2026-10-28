@@ -18,9 +18,9 @@ That mindset—treating evaluation as statistical inference, not a single-point 
 
 ## The motivation
 
- Computing Confidence Intervals when providing performance estimates has not been sufficiently studied. Over the years, researchers have proposed multiple CI estimation methods in different fields, including medical statistics, AutoML, and text classification. Each method has specific assumptions, strengths, and limitations. However, most approaches are designed for a single metric or a narrow class of models, which limits their applicability. 
+ Confidence interval estimation for model performance metrics has not been sufficiently studied. Over the years, researchers have proposed multiple CI estimation methods in different fields, including medical statistics, AutoML, and text classification. Each method has specific assumptions, strengths, and limitations. However, most approaches are designed for a single metric or a narrow class of models, which limits their applicability. 
  
- We have developed a standardized evaluation tool that computes model performance metrics with their confidence intervals (CIs), including multiple CI calculation methods (bootstrapping, Wald, Wilson, etc.), and generating clear visualization graphs. It supports ML, CV, LLMs. 
+ We have developed a standardized evaluation tool that computes model performance metrics and their confidence intervals (CIs) using multiple methods, including bootstrapping, Wald, and Wilson. It also generates visualizations and supports machine learning (ML), computer vision (CV), and large language model (LLM) evaluation. 
 
 
 ## Installation
@@ -54,18 +54,18 @@ y_pred = [0, 1, 0, 0, 1]
 evaluator = MetricEvaluator()
 
 accuracy, ci = evaluator.evaluate(
-y_true=y_true,
-y_pred=y_pred,
-task='classification',
-metric='accuracy',
-method='wilson'
+    y_true=y_true,
+    y_pred=y_pred,
+    task='classification',
+    metric='accuracy',
+    method='wilson'
 )
 ```
 
 ## Confidence Interval Calculation Methods
 Methods that support analytical confidence interval calculation can use analytical approaches. Bootstrap-based methods use bootstrapping to estimate confidence intervals. By default, applicable methods use the bias-corrected and accelerated (BCa) bootstrap method to calculate confidence intervals (CIs). This method adjusts for both bias and skewness in the estimate.
 
-For other computation of the CI for any of the methods below, just specify `method='jackknife_ci'`, or `method='bootstrap_percentile'`. These are different ways of doing the bootstrapping, but `method='bootstrap_bca'` is the generalibly reccomended method.
+To use other confidence interval methods, specify the appropriate method supported by the metric and task. The `bootstrap_bca method` is the default for `MetricEvaluator` and is recommended when applicable.
 
 ## Supported Methods
 - **Analytical Methods**: Wilson, Normal, Agresti-Coull, Beta, Jeffreys, Binomial test
@@ -121,16 +121,21 @@ regression_metrics = evaluator.get_available_metrics('regression')
 print("Classification metrics:", classification_metrics)
 print("Regression metrics:", regression_metrics)
 
+# Get available methods and metrics for object detection
+detection_methods = evaluator.get_available_methods('detection')
+detection_metrics = evaluator.get_available_metrics('detection')
+
+print("Detection methods:", detection_methods)
+print("Detection metrics:", detection_metrics)
 ```
 
-The analytical computation here is using the (amazing) 2022 paper of Takahashi et al (reference below). The paper derived recall and precision only for micro averaging. We derive the recall and precision confidence intervals for macro F1 as well using the delta method.
+The analytical computation is based on the 2022 paper by Takahashi et al. (see References below). The paper derived recall and precision only for micro averaging. We derive the recall and precision confidence intervals for macro F1 as well using the delta method.
 
 
 ## Get a Classification Report
 
 The `classification_report_with_ci` function builds a text report showing the main classification metrics and their confidence intervals.
-Each class will be first treated as a binary classification problem, the default CI for P and R used being Wilson, and Takahashi-binary for F1. Then the 
-micro and macro multi-class metric will be calculated using the Takahashi-methods.
+Each class is first treated as a binary classification problem. Wilson confidence intervals are used by default for precision and recall, while the Takahashi binary method is used for F1. The micro- and macro-averaged multiclass metrics are then calculated using the Takahashi methods.
 
 ```python
 from infer_ci import classification_report_with_ci
@@ -148,7 +153,7 @@ classification_report_with_ci(y_true, y_pred)
 4    macro      0.830   0.889     0.830  (0.702, 0.958)  (0.775, 1.002)  (0.548, 1.113)       20
 ```
 
-## Support for binary, macro and micro averaging for F1, Precision and Recall.
+## Support for Binary, Macro, and Micro Averaging of F1, Precision, and Recall
 ```python
 from infer_ci import precision_score, recall_score, f1_score
 binary_f1, ci = f1_score(y_true, y_pred, confidence_interval=0.95, average='binary')
