@@ -60,10 +60,10 @@ accuracy, ci = evaluator.evaluate(
 )
 ```
 
-## All methods can do an analytical computation, but do a bootsrapping computation by default
-By default all the methods return an Bootstrap Bias-Corrected and Accelerated computation of the confidence intervals (CI). It is an advanced version of the basic bootstrap method that corrects for both bias and skewness in the estimate.
+## All methods support analytical computation, but use bootstrapping by default.
+By default all the methods calculate confidence intervals using the bias-corrected and accelerated (BCa) bootstrap method of the confidence intervals (CI). It is an advanced version of the basic bootstrap method that corrects for both bias and skewness in the estimate.
 
-For other computation of the CI for any of the methods below, just specify `method='jackknife_ci'`, or `method='bootstrap_percentile'`. These are different ways of doing the bootstrapping, but `method='bootstrap_bca'` is the generalibly reccomended method.
+To calculate confidence intervals using other methods for any of the methods below, just specify `method='jackknife_ci'`, or `method='bootstrap_percentile'`. These are different ways of doing the bootstrapping, but `method='bootstrap_bca'` is the generalibly reccomended method.
 
 ## Supported Methods
 - **Analytical Methods**: Wilson, Normal, Agresti-Coull, Beta, Jeffreys, Binomial test
@@ -121,13 +121,13 @@ print("Regression metrics:", regression_metrics)
 
 ```
 
-The analytical computation here is using the (amazing) 2022 paper of Takahashi et al (reference below). The paper derived recall and precision only for micro averaging. We derive the recall and precision confidence intervals for macro F1 as well using the delta method.
+The analytical computation here is based on the (amazing) 2022 paper of Takahashi et al (reference below). The paper derived recall and precision only for micro averaging. We derive the recall and precision confidence intervals for macro F1 as well using the delta method.
 
 
 ## Get a Classification Report
 
 The `classification_report_with_ci` function builds a text report showing the main classification metrics and their confidence intervals.
-Each class will be first treated as a binary classification problem, the default CI for P and R used being Wilson, and Takahashi-binary for F1. Then the 
+Each class will be first treated as a binary classification problem, the default confidence interval methods for precision and recall being Wilson, and Takahashi-binary for F1. Then the 
 micro and macro multi-class metric will be calculated using the Takahashi-methods.
 
 ```python
